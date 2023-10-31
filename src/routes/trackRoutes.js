@@ -1,9 +1,10 @@
 const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 
 const Track = mongoose.model('Track');
+
+const router = express.Router();
 
 router.use(requireAuth);
 
@@ -15,6 +16,7 @@ router.get('/tracks', async (req, res) => {
 
 router.post('/tracks', async (req, res) => {
     const { name, locations } = req.body;
+    const userId = req.user._id
 
     if (!name || !locations) {
         return res
@@ -23,7 +25,8 @@ router.post('/tracks', async (req, res) => {
     }
 
     try {
-    const track = new Track({ name, locations, userID: req.user._id })
+    const track = new Track({ name, locations, userId })
+    console.log(userId)
     await track.save();
     res.send(track);
     } 
